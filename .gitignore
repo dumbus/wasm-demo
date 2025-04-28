@@ -1,5 +1,5 @@
 # compiled files (invert.js, invert.wasm)
-compiled/*
+wasm/compiled/*
 
 # File to upload empty folder to git
-!compiled/.gitkeep
+!wasm/compiled/.gitkeep
