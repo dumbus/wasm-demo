@@ -5,13 +5,15 @@
   "scripts": {
     "js-start": "http-server ./javascript -p 3000",
     "wasm-start": "http-server ./wasm -p 4000",
-    "start": "concurrently \"npm run js-start\" \"npm run wasm-start\""
+    "js-test": "node ./tests/js-performance.test.js",
+    "wasm-test": "node ./tests/wasm-performance.test.js"
   },
   "keywords": [],
   "author": "dumbus",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^9.1.2",
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "puppeteer": "^24.7.2"
   }
 }

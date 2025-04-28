@@ -1,8 +1,10 @@
 # compiled files (invert.js, invert.wasm)
 wasm/compiled/*
-
-# File to upload empty folder to git
 !wasm/compiled/.gitkeep
+
+# .bmp images to test app
+images/*
+!images/.gitkeep
 
 node_modules
 package-lock.json
