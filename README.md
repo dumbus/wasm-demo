@@ -25,15 +25,16 @@ emcc -v
 ```
 emcc cpp/invert.cpp -o compiled/invert.js -sEXPORTED_FUNCTIONS="['_analyze_image', '_invert_colors', '_malloc', '_free']" -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap', 'HEAPU8']" -sALLOW_MEMORY_GROWTH
 ```
+В результате будет получено 2 файла:
+  * `compiled/invert.js` - JavaScript-обёртка, которая позволит работать с C-кодом WebAssembly через обычные вызовы в JavaScript коде
+  * `compiled/invert.wasm` - собранный бинарник WebAssembly, в котором находится вся логика, описанная в `cpp/invert.cpp`, представленная в оптимизированной форме, которая может быть обработана браузером.
 3. Запустить приложение на локальном сервере:
 ```
 python -m http.server 8080
-
 ```
 4. Открыть запущенное приложение по адресу:
 ```
 http://localhost:8080
-
 ```
 
 ### Дополнительно: 
