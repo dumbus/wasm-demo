@@ -1,0 +1,15 @@
+{
+  "name": "wasm-demo",
+  "version": "1.0.0",
+  "description": "wasm-demo",
+  "scripts": {
+    "js-start": "http-server ./javascript -p 3000",
+    "wasm-start": "http-server ./wasm -p 4000"
+  },
+  "keywords": [],
+  "author": "dumbus",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

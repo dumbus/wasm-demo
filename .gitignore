@@ -3,3 +3,6 @@ wasm/compiled/*
 
 # File to upload empty folder to git
 !wasm/compiled/.gitkeep
+
+node_modules
+package-lock.json
