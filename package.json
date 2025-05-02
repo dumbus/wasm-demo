@@ -6,7 +6,9 @@
     "js-start": "http-server ./javascript -p 3000",
     "wasm-start": "http-server ./wasm -p 4000",
     "js-test": "node ./tests/js-performance.test.js",
-    "wasm-test": "node ./tests/wasm-performance.test.js"
+    "wasm-test": "node ./tests/wasm-performance.test.js",
+    "js": "concurrently \"npm run js-start\" \"npm run js-test\"",
+    "wasm": "concurrently \"npm run wasm-start\" \"npm run wasm-test\""
   },
   "keywords": [],
   "author": "dumbus",
