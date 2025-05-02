@@ -5,6 +5,9 @@ wasm/compiled/*
 # .bmp images to test app
 images/*
 !images/.gitkeep
+!images/1.bmp
+!images/2.bmp
+!images/3.bmp
 
 node_modules
 package-lock.json
