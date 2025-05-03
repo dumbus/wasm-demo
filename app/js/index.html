@@ -6,24 +6,42 @@
   <title>JS module</title>
 </head>
 <body>
-  <h1>Invert BMP Image Colors (via JavaScript)</h1>
+  <div class="wrapper">
+    <h1>Invert BMP Image Colors (via JavaScript)</h1>
   
-  <div class="controls">
-    <input type="file" id="fileInput" class="fileInput" accept=".bmp" />
-    <button id="button" class="button">Invert all</button>
+    <button id="invert-button" class="invert-button">Invert All</button>
+  
+    <div id="elapsed-container" class="elapsed-container" style="display: none;">
+      <span>Inversion was completed in</span>
+      <span id="elapsed-value" class="elapsed-value"></span>
+      <span>ms</span>
+    </div>
+  
+    <div id="loader" class="loader" style="display: none;">
+      <div class="spinner"></div>
+      <p id="loader-status" class="loader-status"></p>
+    </div>
+  
+    <div class="gallery">
+      <div class="image-container">
+        <h2 class="image-title">
+          <span>Original Image</span>
+          <span id="original-title"></span>
+        </h2>
+        <div id="original" class="image-box"></div>
+      </div>
+    
+      <div class="image-container">
+        <h2 class="image-title">
+          <span>Inverted Image</span>
+          <span id="inverted-title"></span>
+        </h2>
+        <div id="inverted" class="image-box"></div>
+      </div>
+    </div>
+  
+    <div id="buttons" class="buttons"></div>
   </div>
-
-  <div id="elapsed-container" class="elapsed-container" style="display: none;">
-    <span>Inversion was completed in</span>
-    <span id="elapsed-value" class="elapsed-value"></span>
-    <span>ms</span>
-  </div>
-
-  <div id="loader" class="loader" style="display: none;">
-    <div class="spinner"></div>
-  </div>
-
-  <div id="gallery" class="gallery"></div>
 
   <script src="index.js"></script>
 </body>
