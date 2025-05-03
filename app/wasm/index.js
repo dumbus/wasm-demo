@@ -12,177 +12,157 @@ const getModule = async () => {
   return await ModuleReady;
 };
 
-document.getElementById('fileInput').addEventListener('change', async (event) => {
-  const file = event.target.files[0];
-  const fileName = file.name;
-  if (!file) return;
+let images = [];
 
-  // Initial setup (reset image and elapsed data)
-  resetData();
-  hideElapsed();
+document.getElementById('invert-button').addEventListener('click', async () => {
+	// Reset state
+	images = [];
+	hideImages();
+	hideButtons();
+	hideElapsed();
+	showLoader();
 
-  // Show original image and loader
-  showOriginal(file, fileName);
-  showLoader();
+	const imageList = await getImagesList();
 
-  // Read bytes of image as arrayBuffer
-  const arrayBuffer = await file.arrayBuffer();
-  const bmpBytes = new Uint8Array(arrayBuffer);
+	// Start Timer
+	const startTime = performance.now();
 
-  // Start Timer
-  const startTime = performance.now();
-
-  // === WASM Code (process image) ===
-  const Module = await getModule();
-  const ptr = Module._malloc(bmpBytes.length);
-  Module.HEAPU8.set(bmpBytes, ptr);
-
-  // Analyze image and print some data
-  Module.ccall('analyze_image', null, ['number', 'number'], [ptr, bmpBytes.length]);
-
-  // Invert colors of image
-  Module.ccall('invert_colors', null, ['number', 'string'], [ptr, fileName]);
-
-  // Get inverted image bytes back
-  const invertedBytes = Module.HEAPU8.slice(ptr, ptr + bmpBytes.length);
-
-  Module._free(ptr);
-  // === WASM Code End ===
-
-  // Stop timer
-  const endTime = performance.now();
-
-  hideLoader();
-  showInverted(invertedBytes, fileName);
-  showElapsed(startTime, endTime);
-});
-
-document.getElementById('button').addEventListener('click', async () => {
-  // Initial setup (reset image and elapsed data)
-  resetData();
-  hideElapsed();
-
-  // Show loader
-  showLoader();
-
-  const imageList = await getImagesList();
-
-  // Start Timer
-  const startTime = performance.now();
-
-  // === WASM Code (process images) ===
+	// === WASM Code (process images) ===
 
   const Module = await getModule();
-  
-  for (const fileName of imageList) {
-    const imageFile = await fetch(`/images/${fileName}`);
-    const image = await imageFile.blob();
 
-    // Read bytes of image as arrayBuffer
-    const arrayBuffer = await image.arrayBuffer();
-    const bmpBytes = new Uint8Array(arrayBuffer);
+	for (let i = 0; i < imageList.length; i++) {
+		updateLoaderStatus(`Inverting file ${i + 1}/${imageList.length}`);
+
+		const fileName = imageList[i];
+		const image = await fetchImage(fileName);
+		const arrayBuffer = await image.arrayBuffer();
+		const bmpBytes = new Uint8Array(arrayBuffer);
 
     const ptr = Module._malloc(bmpBytes.length);
     Module.HEAPU8.set(bmpBytes, ptr);
-
-    showOriginal(image, fileName);
-
+	
     // Analyze image and print some data
     Module.ccall('analyze_image', null, ['number', 'number'], [ptr, bmpBytes.length]);
 
     // Invert colors of image
     Module.ccall('invert_colors', null, ['number', 'string'], [ptr, fileName]);
 
-    // Get inverted image bytes back
     const invertedBytes = Module.HEAPU8.slice(ptr, ptr + bmpBytes.length);
 
     Module._free(ptr);
+	
+		saveImage(fileName, bmpBytes, invertedBytes);
+	}
 
-    showInverted(invertedBytes, fileName);
-  }
+	// === WASM Code End ===
 
-  // === WASM Code End ===
+	// Stop timer
+	const endTime = performance.now();
 
-  // Stop timer
-  const endTime = performance.now();
+	hideLoader();
+	showElapsed(startTime, endTime);
+	showButtons();
 
-  hideLoader();
-  showElapsed(startTime, endTime);
+	// show first image
+	showImages(images[0]);
 });
 
-const resetData = () => {
-  const gallery = document.getElementById('gallery');
-  gallery.innerHTML = '';
+const getImagesList = async () => {
+	const response = await fetch('/api/images');
+	return await response.json();
+};
+
+const fetchImage = async (fileName) => {
+	const response = await fetch(`/images/${fileName}`);
+	return await response.blob();
+};
+
+const saveImage = (fileName, originalBytes, invertedBytes) => {
+	const originalBlob = new Blob([originalBytes], { type: 'image/bmp' });
+	const invertedBlob = new Blob([invertedBytes], { type: 'image/bmp' });
+
+	images.push({
+		fileName,
+		originalUrl: URL.createObjectURL(originalBlob),
+		invertedUrl: URL.createObjectURL(invertedBlob),
+	});
+};
+
+const showImages = ({ fileName, originalUrl, invertedUrl }) => {
+	const originalBox = document.getElementById('original');
+	const invertedBox = document.getElementById('inverted');
+
+	originalBox.innerHTML = '';
+	invertedBox.innerHTML = '';
+
+	const originalImg = document.createElement('img');
+	originalImg.src = originalUrl;
+	originalImg.classList.add('image');
+
+	const invertedImg = document.createElement('img');
+	invertedImg.src = invertedUrl;
+	invertedImg.classList.add('image');
+
+	originalBox.appendChild(originalImg);
+	invertedBox.appendChild(invertedImg);
+
+	const originalTitle = document.getElementById('original-title');
+	const invertedTitle = document.getElementById('inverted-title');
+
+	originalTitle.textContent = fileName;
+	invertedTitle.textContent = fileName;
+};
+
+const hideImages = () => {
+	document.getElementById('original').innerHTML = '';
+	document.getElementById('inverted').innerHTML = '';
+};
+
+const showButtons = () => {
+	const container = document.getElementById('buttons');
+
+	images.forEach((img, index) => {
+		const btn = document.createElement('button');
+
+		btn.textContent = String(index + 1);
+		btn.classList.add('pagination-button');
+		btn.addEventListener('click', () => showImages(img));
+
+		container.appendChild(btn);
+	});
+};
+
+const hideButtons = () => {
+	const container = document.getElementById('buttons');
+	container.innerHTML = '';
 };
 
 const showLoader = () => {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'flex';
+	const loader = document.getElementById('loader');
+	loader.style.display = 'flex';
 };
 
 const hideLoader = () => {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'none';
+	const loader = document.getElementById('loader');
+	loader.style.display = 'none';
+};
+
+const updateLoaderStatus = (text) => {
+	const status = document.getElementById('loader-status');
+	status.textContent = text;
 };
 
 const showElapsed = (startTime, endTime) => {
-  const elapsedContainer = document.getElementById('elapsed-container');
-  elapsedContainer.style.display = 'block';
+	const elapsedContainer = document.getElementById('elapsed-container');
+	elapsedContainer.style.display = 'block';
 
-  const elapsedTimeText = document.getElementById('elapsed-value');
-  const elapsedTime = (endTime - startTime).toFixed(2);
-  elapsedTimeText.textContent = String(elapsedTime);
+	const elapsedTimeText = document.getElementById('elapsed-value');
+	const elapsedTime = (endTime - startTime).toFixed(2);
+	elapsedTimeText.textContent = String(elapsedTime);
 };
 
 const hideElapsed = () => {
-  const elapsedContainer = document.getElementById('elapsed-container');
-  elapsedContainer.style.display = 'none';
-};
-
-const showOriginal = (file, fileId) => {
-  const originalUrl = URL.createObjectURL(file);
-
-  const container = document.createElement('div');
-  container.className = 'image-container';
-
-  const title = document.createElement('h2');
-  title.className = 'image-title';
-  title.textContent = `Original Image ${fileId}`;
-  
-  const originalImage = document.createElement('div');
-  originalImage.className = 'image-box';
-  originalImage.style.backgroundImage = `url(${originalUrl})`;
-
-  container.appendChild(title);
-  container.appendChild(originalImage);
-
-  document.getElementById('gallery').appendChild(container);
-};
-
-const showInverted = (invertedBytes, fileId) => {
-  const blob = new Blob([invertedBytes], { type: 'image/bmp' });
-  const invertedUrl = URL.createObjectURL(blob);
-  
-  const container = document.createElement('div');
-  container.className = 'image-container';
-
-  const title = document.createElement('h2');
-  title.className = 'image-title';
-  title.textContent = `Inverted Image ${fileId}`;
-  
-  const invertedImage = document.createElement('div');
-  invertedImage.className = 'image-box';
-  invertedImage.style.backgroundImage = `url(${invertedUrl})`;
-
-  container.appendChild(title);
-  container.appendChild(invertedImage);
-
-  document.getElementById('gallery').appendChild(container);
-};
-
-const getImagesList = async () => {
-  const response = await fetch('/api/images');
-  const imageList = await response.json();
-
-  return imageList;
+	const elapsedContainer = document.getElementById('elapsed-container');
+	elapsedContainer.style.display = 'none';
 };

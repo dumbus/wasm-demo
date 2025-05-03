@@ -1,26 +1,42 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.invert-button {
+  display: block;
+  height: 30px;
+  width: 100px;
+  margin: 0 auto;
+}
+
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(2, 300px);
+  display: flex;
+  justify-content: center;
   gap: 20px;
 }
 
 .image-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 300px;
   height: 300px;
   border: 1px solid #ccc;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
 }
 
-.controls {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.image {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-.button {
-  width: 100px;
+.pagination-button {
+  margin-top: 20px;
+  height: 50px;
+  width: 50px;
 }
 
 .elapsed-container {
@@ -40,9 +56,15 @@
   height: 100vh;
   background: rgba(255, 255, 255, 0.8);
   display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 20px;
   justify-content: center;
   z-index: 10;
+}
+
+.loader-status {
+  font-size: 24px;
 }
 
 .spinner {
