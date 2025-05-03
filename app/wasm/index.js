@@ -30,7 +30,9 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
   Module.ccall('analyze_image', null, ['number', 'number'], [ptr, bmpBytes.length]);
 
   // Invert colors of image
-  Module.ccall('invert_colors', null, ['number'], [ptr]);
+  for (let i = 0; i < 20; i++) {
+    Module.ccall('invert_colors', null, ['number'], [ptr]);
+  }
 
   // Get inverted image bytes back
   const invertedBytes = Module.HEAPU8.slice(ptr, ptr + bmpBytes.length);

@@ -53,18 +53,20 @@ extern "C" {
     int height = header->height;
     int rowSize = (width * 3 + 3) & (~3); // Выравнивание строк до кратного 4 байтам
 
-    for (int y = 0; y < height; ++y) {
-      uint8_t* row = data + pixelDataOffset + y * rowSize;
-      for (int x = 0; x < width; ++x) {
-        uint8_t* pixel = row + x * 3;
-        pixel[0] = 255 - pixel[0]; // Blue
-        pixel[1] = 255 - pixel[1]; // Green
-        pixel[2] = 255 - pixel[2]; // Red
+    for (int i = 0; i < 100; ++i) {
+      for (int y = 0; y < height; ++y) {
+        uint8_t* row = data + pixelDataOffset + y * rowSize;
+        for (int x = 0; x < width; ++x) {
+          uint8_t* pixel = row + x * 3;
+          pixel[0] = 255 - pixel[0]; // Blue
+          pixel[1] = 255 - pixel[1]; // Green
+          pixel[2] = 255 - pixel[2]; // Red
+        }
       }
+
+      printf("Image colors inverted ... times");
     }
 
-    printf("Image colors inverted!\n");
-    printf("\n");
     fflush(stdout);
   }
 

@@ -1,10 +1,11 @@
 {
   "name": "wasm-demo",
   "version": "1.0.0",
+  "type": "module",
   "description": "wasm-demo",
   "scripts": {
-    "js-start": "http-server ./javascript -p 3000",
-    "wasm-start": "http-server ./wasm -p 4000",
+    "js-start": "node ./app/server.js",
+    "wasm-start": "http-server ./app/wasm -p 4000",
     "js-test": "node ./tests/js-performance.test.js",
     "wasm-test": "node ./tests/wasm-performance.test.js",
     "js": "concurrently \"npm run js-start\" \"npm run js-test\"",
@@ -15,7 +16,9 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^9.1.2",
-    "http-server": "^14.1.1",
     "puppeteer": "^24.7.2"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }

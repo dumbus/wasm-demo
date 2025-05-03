@@ -1,5 +1,6 @@
 document.getElementById('fileInput').addEventListener('change', async (event) => {
   const file = event.target.files[0];
+  const fileName = file.name;
   if (!file) return;
 
   // Initial setup (reset image and elapsed data)
@@ -7,7 +8,7 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
   hideElapsed();
 
   // Show original image and loader
-  showOriginal(file);
+  showOriginal(file, fileName);
   showLoader();
 
   // Read bytes of image as arrayBuffer
@@ -20,7 +21,7 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
   // === JavaScript Code (process image) ===
   analyzeImage(bmpBytes)
 
-  const invertedBytes = invertColors(bmpBytes);
+  const invertedBytes = invertColors(bmpBytes, fileName);
 
   // === JavaScript Code End ===
 
@@ -28,17 +29,58 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
   const endTime = performance.now();
 
   hideLoader();
-  showInverted(invertedBytes);
+  showInverted(invertedBytes, fileName);
+  showElapsed(startTime, endTime);
+});
+
+document.getElementById('button').addEventListener('click', async () => {
+  // Initial setup (reset image and elapsed data)
+  resetData();
+  hideGallery();
+  hideElapsed();
+
+  // Show loader
+  showLoader();
+
+  const imageList = await getImagesList();
+
+  console.log(imageList);
+
+  // Start Timer
+  const startTime = performance.now();
+
+  // === JavaScript Code (process images) ===
+  
+  for (const fileName of imageList) {
+    const imageFile = await fetch(`/images/${fileName}`);
+    const image = await imageFile.blob();
+
+    // Read bytes of image as arrayBuffer
+    const arrayBuffer = await image.arrayBuffer();
+    const bmpBytes = new Uint8Array(arrayBuffer);
+
+    showOriginal(image, fileName);
+
+    analyzeImage(bmpBytes)
+    const invertedBytes = invertColors(bmpBytes, fileName);
+
+    showInverted(invertedBytes, fileName);
+  }
+
+  // === JavaScript Code End ===
+
+  // Stop timer
+  const endTime = performance.now();
+
+  hideLoader();
+  showGallery();
   showElapsed(startTime, endTime);
 });
 
 const resetData = () => {
-  const originalImage = document.getElementById('original');
-  const invertedImage = document.getElementById('inverted');
-
-  originalImage.style.backgroundImage = '';
-  invertedImage.style.backgroundImage = '';
-}
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = '';
+};
 
 const showLoader = () => {
   const loader = document.getElementById('loader');
@@ -64,19 +106,62 @@ const hideElapsed = () => {
   elapsedContainer.style.display = 'none';
 };
 
-const showOriginal = (file) => {
-  const originalImage = document.getElementById('original');
-
+const showOriginal = (file, fileId) => {
   const originalUrl = URL.createObjectURL(file);
+
+  const container = document.createElement('div');
+  container.className = 'image-container';
+
+  const title = document.createElement('h2');
+  title.className = 'image-title';
+  title.textContent = `Original Image ${fileId}`;
+  
+  const originalImage = document.createElement('div');
+  originalImage.className = 'image-box';
   originalImage.style.backgroundImage = `url(${originalUrl})`;
+
+  container.appendChild(title);
+  container.appendChild(originalImage);
+
+  document.getElementById('gallery').appendChild(container);
 };
 
-const showInverted = (invertedBytes) => {
-  const invertedImage = document.getElementById('inverted');
-
+const showInverted = (invertedBytes, fileId) => {
   const blob = new Blob([invertedBytes], { type: 'image/bmp' });
   const invertedUrl = URL.createObjectURL(blob);
+  
+  const container = document.createElement('div');
+  container.className = 'image-container';
+
+  const title = document.createElement('h2');
+  title.className = 'image-title';
+  title.textContent = `Inverted Image ${fileId}`;
+  
+  const invertedImage = document.createElement('div');
+  invertedImage.className = 'image-box';
   invertedImage.style.backgroundImage = `url(${invertedUrl})`;
+
+  container.appendChild(title);
+  container.appendChild(invertedImage);
+
+  document.getElementById('gallery').appendChild(container);
+};
+
+const showGallery = () => {
+  const gallery = document.getElementById('gallery');
+  gallery.style.display = 'grid';
+};
+
+const hideGallery = () => {
+  const gallery = document.getElementById('gallery');
+  gallery.style.display = 'none';
+};
+
+const getImagesList = async () => {
+  const response = await fetch('/api/images');
+  const imageList = await response.json();
+
+  return imageList;
 };
 
 const analyzeImage = (bmpBytes) => {
@@ -108,10 +193,9 @@ const analyzeImage = (bmpBytes) => {
   console.log(`Height: ${height} pixels`);
   console.log(`Bits per pixel: ${bitsPerPixel}`);
   console.log(`Data starts at offset: ${dataOffset} bytes`);
-  console.log('');
 }
 
-function invertColors(bmpBytes) {
+function invertColors(bmpBytes, fileName) {
   const dataOffset = bmpBytes[10] | (bmpBytes[11] << 8) | (bmpBytes[12] << 16) | (bmpBytes[13] << 24);
   const width = bmpBytes[18] | (bmpBytes[19] << 8) | (bmpBytes[20] << 16) | (bmpBytes[21] << 24);
   const height = bmpBytes[22] | (bmpBytes[23] << 8) | (bmpBytes[24] << 16) | (bmpBytes[25] << 24);
@@ -129,6 +213,9 @@ function invertColors(bmpBytes) {
       invertedBmp[pixelOffset + 2] = 255 - bmpBytes[pixelOffset + 2]; // Red
     }
   }
+
+  console.log(`Image ${fileName} was inverted`);
+  console.log('');
 
   return invertedBmp;
 };

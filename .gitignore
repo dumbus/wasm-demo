@@ -3,11 +3,12 @@ wasm/compiled/*
 !wasm/compiled/.gitkeep
 
 # .bmp images to test app
-images/*
-!images/.gitkeep
-!images/1.bmp
-!images/2.bmp
-!images/3.bmp
+app/images/*
+!app/images/.gitkeep
+!app/images/1.bmp
+!app/images/2.bmp
+!app/images/3.bmp
+!app/images/images.json
 
 node_modules
 package-lock.json
