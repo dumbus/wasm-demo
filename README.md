@@ -30,7 +30,7 @@ emcc -v
 > Если `emcc` при установке не был добавлен в системные переменные, перед компиляцией следует выполнить команды, описанные ниже в разделе "Дополнительная настройка emcc"
 3. Компиляция wasm-модуля:
 ```
-emcc wasm/cpp/invert.cpp -o wasm/compiled/invert.js -sEXPORTED_FUNCTIONS="['_analyze_image', '_invert_colors', '_malloc', '_free']" -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap', 'HEAPU8']" -sALLOW_MEMORY_GROWTH
+emcc wasm/cpp/invert.cpp -o wasm/compiled/invert.js -O3 -sEXPORTED_FUNCTIONS="['_analyze_image', '_invert_colors', '_malloc', '_free']" -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap', 'HEAPU8']" -sALLOW_MEMORY_GROWTH
 ```
 4. Следует подготовить набор .bmp-файлов, которые будут преобразовываться в ходе работы приложения. Эти файлы следует поместить в папку `./images`. Для минимального тестирования в папке уже находится 3 изображения, однако рекомендуется использовать большее количество файлов.
 

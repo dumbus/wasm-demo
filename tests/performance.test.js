@@ -1,6 +1,12 @@
-const puppeteer = require('puppeteer');
-const fs = require('fs');
-const path = require('path');
+import puppeteer from 'puppeteer';
+import fs from 'fs';
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const mode = process.argv[2] || 'default'; // 'js', 'wasm', or fallback to 'default'
 
 (async () => {
   const browser = await puppeteer.launch({ headless: true });
@@ -26,7 +32,7 @@ const path = require('path');
 
     const elapsedTime = await page.$eval('#elapsed-value', el => parseFloat(el.textContent));
 
-    console.log(`Image ${imageFile} processed in ${elapsedTime} ms`);
+    console.log(`Image ${imageFile} processed by ${mode} in ${elapsedTime} ms`);
 
     totalTime += elapsedTime;
     imageCount++;

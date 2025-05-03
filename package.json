@@ -2,20 +2,22 @@
   "name": "wasm-demo",
   "version": "1.0.0",
   "description": "wasm-demo",
+  "type": "module",
   "scripts": {
-    "js-start": "http-server ./javascript -p 3000",
-    "wasm-start": "http-server ./wasm -p 4000",
-    "js-test": "node ./tests/js-performance.test.js",
-    "wasm-test": "node ./tests/wasm-performance.test.js",
-    "js": "concurrently \"npm run js-start\" \"npm run js-test\"",
-    "wasm": "concurrently \"npm run wasm-start\" \"npm run wasm-test\""
+    "js-start": "node ./server.js js",
+    "wasm-start": "node ./server.js wasm",
+    "test": "node ./tests/performance.test.js",
+    "js": "concurrently \"npm run js-start\" \"npm run test js\"",
+    "wasm": "concurrently \"npm run wasm-start\" \"npm run test wasm\""
   },
   "keywords": [],
   "author": "dumbus",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^9.1.2",
-    "http-server": "^14.1.1",
     "puppeteer": "^24.7.2"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }
