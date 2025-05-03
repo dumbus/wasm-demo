@@ -172,7 +172,7 @@ const analyzeImage = (bmpBytes) => {
 	console.log(`Data starts at offset: ${dataOffset} bytes`);
 }
 
-function invertColors(bmpBytes, fileName) {
+const invertColors = (bmpBytes, fileName) => {
 	const dataOffset = bmpBytes[10] | (bmpBytes[11] << 8) | (bmpBytes[12] << 16) | (bmpBytes[13] << 24);
 	const width = bmpBytes[18] | (bmpBytes[19] << 8) | (bmpBytes[20] << 16) | (bmpBytes[21] << 24);
 	const height = bmpBytes[22] | (bmpBytes[23] << 8) | (bmpBytes[24] << 16) | (bmpBytes[25] << 24);
