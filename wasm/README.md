@@ -49,7 +49,7 @@ C:\emsdk\emsdk_env.ps1
 
 1. Скомпилировать приложение с помощью следующей команды:
 ```
-emcc cpp/invert.cpp -o compiled/invert.js -sEXPORTED_FUNCTIONS="['_analyze_image', '_invert_colors', '_malloc', '_free']" -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap', 'HEAPU8']" -sALLOW_MEMORY_GROWTH
+emcc cpp/invert.cpp -o compiled/invert.js -O3 -sEXPORTED_FUNCTIONS="['_analyze_image', '_invert_colors', '_malloc', '_free']" -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap', 'HEAPU8']" -sALLOW_MEMORY_GROWTH
 ```
 В результате будет получено 2 файла:
   * `compiled/invert.js` - JavaScript-обёртка, которая позволит работать с C-кодом WebAssembly через обычные вызовы в JavaScript коде
@@ -60,12 +60,12 @@ npm run wasm-start
 ```
 3. Открыть запущенное приложение по адресу:
 ```
-http://localhost:4000
+http://localhost:3000
 ```
 4. Протестировать работу приложения вручную
 5. Запустить скрипт для автоматического тестирования:
 ```
-npm run wasm-test
+npm run test wasm
 ```
 
 > Также можно воспользоваться единой командой для запуска сервера и инициализации автоматического тестирования:
