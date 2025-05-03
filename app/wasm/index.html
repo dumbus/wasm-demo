@@ -3,26 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="./index.css">
-  <title>BMP Inverter (via C)</title>
+  <title>WASM module</title>
 </head>
 <body>
-  <h1>Invert BMP Image Colors (via C)</h1>
-  <input type="file" id="fileInput" accept=".bmp" />
-
-  <div class="wrapper">
-    <div class="image-container">
-      <h2 class="image-title">Original Image</h2>
-      <div id="original" class="image-box"></div>
-    </div>
+  <h1>Invert BMP Image Colors (via WASM)</h1>
   
-    <div class="image-container">
-      <h2 class="image-title">Inverted Image</h2>
-      <div id="inverted" class="image-box"></div>
-    </div>
+  <div class="controls">
+    <input type="file" id="fileInput" class="fileInput" accept=".bmp" />
+    <button id="button" class="button">Invert all</button>
   </div>
 
   <div id="elapsed-container" class="elapsed-container" style="display: none;">
-    <span>Image was inverted in</span>
+    <span>Inversion was completed in</span>
     <span id="elapsed-value" class="elapsed-value"></span>
     <span>ms</span>
   </div>
@@ -31,7 +23,9 @@
     <div class="spinner"></div>
   </div>
 
-  <script src="./compiled/invert.js"></script>
+  <div id="gallery" class="gallery"></div>
+
+  <script src="compiled/invert.js"></script>
   <script src="index.js"></script>
 </body>
 </html>

@@ -4,8 +4,8 @@
   "type": "module",
   "description": "wasm-demo",
   "scripts": {
-    "js-start": "node ./app/server.js",
-    "wasm-start": "http-server ./app/wasm -p 4000",
+    "js-start": "node ./app/server.js js",
+    "wasm-start": "node ./app/server.js wasm",
     "js-test": "node ./tests/js-performance.test.js",
     "wasm-test": "node ./tests/wasm-performance.test.js",
     "js": "concurrently \"npm run js-start\" \"npm run js-test\"",

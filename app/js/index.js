@@ -36,15 +36,12 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
 document.getElementById('button').addEventListener('click', async () => {
   // Initial setup (reset image and elapsed data)
   resetData();
-  hideGallery();
   hideElapsed();
 
   // Show loader
   showLoader();
 
   const imageList = await getImagesList();
-
-  console.log(imageList);
 
   // Start Timer
   const startTime = performance.now();
@@ -73,7 +70,6 @@ document.getElementById('button').addEventListener('click', async () => {
   const endTime = performance.now();
 
   hideLoader();
-  showGallery();
   showElapsed(startTime, endTime);
 });
 
@@ -116,9 +112,10 @@ const showOriginal = (file, fileId) => {
   title.className = 'image-title';
   title.textContent = `Original Image ${fileId}`;
   
-  const originalImage = document.createElement('div');
+  const originalImage = document.createElement('img');
   originalImage.className = 'image-box';
-  originalImage.style.backgroundImage = `url(${originalUrl})`;
+  originalImage.src = originalUrl;
+  originalImage.loading = 'lazy';
 
   container.appendChild(title);
   container.appendChild(originalImage);
@@ -136,25 +133,16 @@ const showInverted = (invertedBytes, fileId) => {
   const title = document.createElement('h2');
   title.className = 'image-title';
   title.textContent = `Inverted Image ${fileId}`;
-  
-  const invertedImage = document.createElement('div');
+
+  const invertedImage = document.createElement('img');
   invertedImage.className = 'image-box';
-  invertedImage.style.backgroundImage = `url(${invertedUrl})`;
+  invertedImage.src = invertedUrl;
+  invertedImage.loading = 'lazy';
 
   container.appendChild(title);
   container.appendChild(invertedImage);
 
   document.getElementById('gallery').appendChild(container);
-};
-
-const showGallery = () => {
-  const gallery = document.getElementById('gallery');
-  gallery.style.display = 'grid';
-};
-
-const hideGallery = () => {
-  const gallery = document.getElementById('gallery');
-  gallery.style.display = 'none';
 };
 
 const getImagesList = async () => {
