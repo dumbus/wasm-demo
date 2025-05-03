@@ -6,9 +6,9 @@
   "scripts": {
     "js-start": "node ./app/server.js js",
     "wasm-start": "node ./app/server.js wasm",
-    "general-test": "node ./tests/performance.test.js",
-    "js": "concurrently \"npm run js-start\" \"npm run general-test js\"",
-    "wasm": "concurrently \"npm run wasm-start\" \"npm run general-test wasm\""
+    "test": "node ./tests/performance.test.js",
+    "js": "concurrently \"npm run js-start\" \"npm run test js\"",
+    "wasm": "concurrently \"npm run wasm-start\" \"npm run test wasm\""
   },
   "keywords": [],
   "author": "dumbus",
